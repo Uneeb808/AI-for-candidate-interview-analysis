@@ -68,6 +68,16 @@ Each is aggregated across all frames to yield a **final average (0–10)**.
 ## Installation Required-
 
 1. **Prerequisites:**  
-   ```bash
-   pip install -r requirements.txt
-   # ensures: Flask, OpenCV, MediaPipe, hsemotion-onnx, librosa, ffmpeg…
+Make sure to install the following Python libraries before running the project:
+
+```bash
+pip install flask
+pip install opencv-python
+pip install mediapipe
+pip install hsemotion-onnx
+pip install librosa
+pip install matplotlib
+pip install numpy
+pip install Pillow
+pip install ffmpeg
+
