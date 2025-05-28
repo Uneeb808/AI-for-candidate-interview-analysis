@@ -80,4 +80,15 @@ pip install matplotlib
 pip install numpy
 pip install Pillow
 pip install ffmpeg
+```
+
+## 🚀 How to Run the Application
+
+### 1. Navigate to the Project Directory in your terminal
+
+```bash
+cd your_project_folder
+
+python app.py
+
 
