@@ -65,6 +65,30 @@ Each is aggregated across all frames to yield a **final average (0–10)**.
 
 ---
 
+## File Structure & Descriptions
+
+- **app.py**  
+  This is the main backend file built with Flask. It handles:
+  - Accepting video uploads.
+  - Video processing and audio extraction using **OpenCV**, **MediaPipe**, and **Librosa**.
+  - Running the core machine learning models for emotion recognition and metric computation.
+  - Compiling the analysis results and rendering appropriate HTML pages (e.g., result.html).
+
+- **index.html**  
+  The landing page of the application where users:
+  - Record their interview sessions with their webcam.
+  - Use interactive controls (implemented with **JavaScript**) to start and stop recordings.
+  - Experience a sleek, modern design thanks to advanced **CSS** styling.
+
+- **result.html**  
+  The results page displays the detailed analysis of the interview session. It includes:
+  - Comprehensive metrics such as overall score, emotion score, posture, and stress indicators.
+  - A dynamic time-series graph rendered using **Chart.js** (integrated via **JavaScript**) to visualize performance over time.
+  - A clean, card-based layout styled with modern **CSS** that ensures a professional look and responsive design.
+
+- **error.html**  
+  This page is used to display custom error messages in a user-friendly manner. It maintains consistent aesthetics with the rest of the application and helps guide the user when issues arise.
+
 ## Installation Required-
 
 1. **Prerequisites:**  
