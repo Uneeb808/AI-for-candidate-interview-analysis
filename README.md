@@ -65,7 +65,7 @@ Each is aggregated across all frames to yield a **final average (0–10)**.
 
 ---
 
-## 🚀 Getting Started
+## Installation Required-
 
 1. **Prerequisites:**  
    ```bash
