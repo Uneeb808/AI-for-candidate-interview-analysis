@@ -1,1 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>InsightHire AI - Analysis Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #24243e 50%, #313266 100%);
+      min-height: 100vh;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .background-pattern {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+        linear-gradient(135deg, rgba(0,0,0,0.1) 0%, transparent 100%);
+      z-index: -1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: fadeInDown 1s ease-out;
+    }
+
+    header h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 400;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: slideInUp 0.8s ease-out;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 
+        0 32px 80px rgba(0, 0, 0, 0.15),
+        0 12px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-icon {
+      font-size: 1.8rem;
+      padding: 8px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    }
+
+    .score-display {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .score-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .score-label {
+      font-size: 0.9rem;
+      color: #64748b;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .score-ring {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: conic-gradient(from 0deg, #e2e8f0 0deg, #e2e8f0 var(--progress, 0deg), transparent var(--progress, 0deg));
+    }
+
+    .score-ring::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .score-ring .score-number {
+      position: relative;
+      z-index: 1;
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .good { 
+      color: #059669;
+      --progress: calc(var(--score) * 36deg);
+      background: conic-gradient(from 0deg, #10b981 0deg, #10b981 var(--progress), #e2e8f0 var(--progress));
+    }
+    
+    .average { 
+      color: #d97706;
+      --progress: calc(var(--score) * 36deg);
+      background: conic-gradient(from 0deg, #f59e0b 0deg, #f59e0b var(--progress), #e2e8f0 var(--progress));
+    }
+    
+    .poor { 
+      color: #dc2626;
+      --progress: calc(var(--score) * 36deg);
+      background: conic-gradient(from 0deg, #ef4444 0deg, #ef4444 var(--progress), #e2e8f0 var(--progress));
+    }
+
+    .metrics-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .metrics-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.95rem;
+    }
+
+    .metrics-list li:last-child {
+      border-bottom: none;
+    }
+
+    .metric-label {
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .metric-value {
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    .chart-container {
+      grid-column: 1 / -1;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 
+        0 20px 60px rgba(0, 0, 0, 0.1),
+        0 8px 32px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideInUp 1s ease-out 0.2s both;
+    }
+
+    .chart-container h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: 400px !important;
+    }
+
+    /* Percentage Bar Styling for Key Performance Metrics */
+    .metric-item-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.95em;
+    }
+
+    .metric-label-bar {
+      flex: 0 0 120px; /* Fixed width for labels */
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .progress-bar-container {
+      flex-grow: 1;
+      height: 10px;
+      background-color: #e2e8f0; /* Lighter background for the bar */
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #0d9488; /* Default color: Teal */
+      width: var(--progress-width, 0%); /* CSS variable for dynamic width */
+      transition: width 0.8s ease-out; /* Smooth animation */
+      border-radius: 5px;
+    }
+
+    /* Color classes for different scores */
+    .progress-bar.good { background-color: #10b981; } /* Green */
+    .progress-bar.average { background-color: #fbbf24; } /* Amber */
+    .progress-bar.poor { background-color: #ef4444; } /* Red */
+
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .summary-item {
+      text-align: center;
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-item .label {
+      font-size: 0.85rem;
+      color: #64748b;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .summary-item .value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #1e293b;
+    }
+
+    .action-buttons {
+      text-align: center;
+      margin: 40px 0;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
+    }
+
+    .debug-panel {
+      background: rgba(30, 41, 59, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      padding: 24px;
+      border-radius: 16px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      margin-top: 40px;
+      animation: slideInUp 1.2s ease-out 0.4s both;
+    }
+
+    .debug-panel h3 {
+      color: #f1f5f9;
+      margin-bottom: 16px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .debug-panel pre {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 15px;
+      }
+      
+      header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .results-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .card {
+        padding: 24px;
+      }
+      
+      .chart-container {
+        padding: 24px;
+      }
+      
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      canvas {
+        height: 300px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .score-display {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-pattern"></div>
+  
+  <div class="container">
+    <header>
+      <h1>InsightHire AI</h1>
+      <p>Comprehensive Interview Analysis Results</p>
+    </header>
+    
+    <div class="results-grid">
+      <div class="card">
+        <h2>
+          <span class="card-icon">🎯</span>
+          Overall Performance
+        </h2>
+        <div class="score-display">
+          <div>
+            <div class="score-label">Final Score</div>
+            <div class="score-value {% if final_score >= 7 %}good{% elif final_score >= 5 %}average{% else %}poor{% endif %}">
+              {{ final_score }}/10
+            </div>
+          </div>
+          <div class="score-ring {% if final_score >= 7 %}good{% elif final_score >= 5 %}average{% else %}poor{% endif %}" style="--score: {{ final_score }}">
+            <div class="score-number">{{ final_score }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>
+          <span class="card-icon">🎭</span>
+          Emotion Analysis
+        </h2>
+        <div class="score-display">
+          <div>
+            <div class="score-label">Emotion Score</div>
+            <div class="score-value {% if emotion_score >= 7 %}good{% elif emotion_score >= 5 %}average{% else %}poor{% endif %}">
+              {{ emotion_score }}/10
+            </div>
+          </div>
+          <div class="score-ring {% if emotion_score >= 7 %}good{% elif emotion_score >= 5 %}average{% else %}poor{% endif %}" style="--score: {{ emotion_score }}">
+            <div class="score-number">{{ emotion_score }}</div>
+          </div>
+        </div>
+        <ul class="metrics-list">
+          {% for emotion, count in emotions.items() %}
+          <li>
+            <span class="metric-label">{{ emotion.title() }}</span>
+            <span class="metric-value">{{ count }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      
+      <div class="card">
+        <h2>
+          <span class="card-icon">👁️</span>
+          Eye Contact Analysis
+        </h2>
+        <div class="score-display">
+          <div>
+            <div class="score-label">Eye Contact Score</div>
+            <div class="score-value {% if eye_contact_score >= 7 %}good{% elif eye_contact_score >= 5 %}average{% else %}poor{% endif %}">
+              {{ eye_contact_score }}/10
+            </div>
+          </div>
+          <div class="score-ring {% if eye_contact_score >= 7 %}good{% elif eye_contact_score >= 5 %}average{% else %}poor{% endif %}" style="--score: {{ eye_contact_score }}">
+            <div class="score-number">{{ eye_contact_score }}</div>
+          </div>
+        </div>
+        <ul class="metrics-list">
+          <li>
+            <span class="metric-label">Poor Eye Contact Frames</span>
+            <span class="metric-value">{{ eye_avoidance_count }}</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="card">
+        <h2>
+          <span class="card-icon">🏃</span>
+          Posture Analysis
+        </h2>
+        <div class="score-display">
+          <div>
+            <div class="score-label">Posture Score</div>
+            <div class="score-value {% if posture_score >= 7 %}good{% elif posture_score >= 5 %}average{% else %}poor{% endif %}">
+              {{ posture_score }}/10
+            </div>
+          </div>
+          <div class="score-ring {% if posture_score >= 7 %}good{% elif posture_score >= 5 %}average{% else %}poor{% endif %}" style="--score: {{ posture_score }}">
+            <div class="score-number">{{ posture_score }}</div>
+          </div>
+        </div>
+        <ul class="metrics-list">
+          <li>
+            <span class="metric-label">Posture Shifts</span>
+            <span class="metric-value">{{ posture_shift_count }}</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="card">
+        <h2>
+          <span class="card-icon">📊</span>
+          Anxiety Analysis
+        </h2>
+        <div class="score-display">
+          <div>
+            <div class="score-label">Anxiety Score</div>
+            <div class="score-value {% if anxiety_score >= 7 %}good{% elif anxiety_score >= 5 %}average{% else %}poor{% endif %}">
+              {{ anxiety_score }}/10
+            </div>
+          </div>
+          <div class="score-ring {% if anxiety_score >= 7 %}good{% elif anxiety_score >= 5 %}average{% else %}poor{% endif %}" style="--score: {{ anxiety_score }}">
+            <div class="score-number">{{ anxiety_score }}</div>
+          </div>
+        </div>
+        <ul class="metrics-list">
+          <li>
+            <span class="metric-label">Blinks</span>
+            <span class="metric-value">{{ blink_count }}</span>
+          </li>
+          <li>
+            <span class="metric-label">Face Touches</span>
+            <span class="metric-value">{{ face_touch_count }}</span>
+          </li>
+          <li>
+            <span class="metric-label">Jaw Tension Events</span>
+            <span class="metric-value">{{ jaw_tension_count }}</span>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="card">
+        <h2>
+          <span class="card-icon">🎵</span>
+          Voice Analytics
+        </h2>
+        <ul class="metrics-list">
+          <li>
+            <span class="metric-label">Pitch Variability</span>
+            <span class="metric-value">{{ norm_pitch_std }}</span>
+          </li>
+          <li>
+            <span class="metric-label">Pitch Range</span>
+            <span class="metric-value">{{ norm_pitch_range }}</span>
+          </li>
+          <li>
+            <span class="metric-label">Energy Variance</span>
+            <span class="metric-value">{{ energy_variance }}</span>
+          </li>
+          <li>
+            <span class="metric-label">Head Nods</span>
+            <span class="metric-value">{{ head_nod_count }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <h2>📈 Performance Timeline</h2>
+      <canvas id="performanceChart"></canvas>
+      <p style="text-align: center; color: #64748b; margin-top: 16px;">
+        Interactive timeline showing your performance metrics throughout the interview
+      </p>
+    </div>
+    
+    <div class="card">
+      <h2>
+        <span class="card-icon">⚡</span>
+        Key Performance Metrics
+      </h2>
+      <div class="metric-item-bar">
+        <span class="metric-label-bar">Engagement:</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="engagement-bar"></div>
+        </div>
+        <span class="metric-value" style="margin-left: 10px;">{{ engagement_final }}/10</span>
+      </div>
+      <div class="metric-item-bar">
+        <span class="metric-label-bar">Confidence:</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="confidence-bar"></div>
+        </div>
+        <span class="metric-value" style="margin-left: 10px;">{{ confidence_final }}/10</span>
+      </div>
+      <div class="metric-item-bar">
+        <span class="metric-label-bar">Stress Level:</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="stress-bar"></div>
+        </div>
+        <span class="metric-value" style="margin-left: 10px;">{{ stress_final }}/10</span>
+      </div>
+      <div class="metric-item-bar">
+        <span class="metric-label-bar">Professionalism:</span>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="professionalism-bar"></div>
+        </div>
+        <span class="metric-value" style="margin-left: 10px;">{{ professionalism_final }}/10</span>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <a href="/" class="btn-primary">
+        🔄 Start New Interview
+      </a>
+    </div>
+    
+    <div class="debug-panel">
+      <h3>🔧 Technical Data</h3>
+      <pre id="debug-data"></pre>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  
+  <script type="text/javascript">
+    const safeParse = (data, fallback) => {
+      try {
+        const parsed = JSON.parse(data);
+        console.log("Parsed data successfully:", parsed);
+        return parsed;
+      } catch (e) {
+        console.error("Error parsing JSON data:", e, "Raw data:", data);
+        return fallback;
+      }
+    };
+
+    // Parse data with fallbacks
+    let times = safeParse(`{{ times|tojson|safe }}`, [0, 10, 20, 30, 40, 50]);
+    let engagement = safeParse(`{{ engagement_ts|tojson|safe }}`, [6.5, 7, 7.5, 7.2, 7.8, 7.6]);
+    let confidence = safeParse(`{{ confidence_ts|tojson|safe }}`, [5.5, 5.9, 6, 5.8, 6.1, 6]);
+    let stress = safeParse(`{{ stress_ts|tojson|safe }}`, [4.5, 4.3, 4.2, 4.4, 4.1, 4.3]);
+    let professionalism = safeParse(`{{ professionalism_ts|tojson|safe }}`, [8, 8.2, 8.1, 8.2, 8.3, 8.1]);
+      
+    // Fallback if data arrays are empty
+    if (!times || times.length === 0) {
+      console.warn("Times data is empty, using fallback.");
+      times = [0, 10, 20, 30, 40, 50];
+      engagement = [6.5, 7, 7.5, 7.2, 7.8, 7.6];
+      confidence = [5.5, 5.9, 6, 5.8, 6.1, 6];
+      stress = [4.5, 4.3, 4.2, 4.4, 4.1, 4.3];
+      professionalism = [8, 8.2, 8.1, 8.2, 8.3, 8.1];
+    }
+    
+    // Display debug information
+    const debugData = {
+      times: times,
+      engagement: engagement,
+      confidence: confidence,
+      stress: stress,
+      professionalism: professionalism
+    };
+    document.getElementById('debug-data').textContent = JSON.stringify(debugData, null, 2);
+    
+    // Create the performance chart
+    try {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      
+      const chartData = {
+        labels: times.map(t => `${t}s`),
+        datasets: [
+          {
+            label: 'Engagement',
+            data: engagement,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#10b981',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6
+          },
+          {
+            label: 'Confidence',
+            data: confidence,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6
+          },
+          {
+            label: 'Stress Level',
+            data: stress,
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#ef4444',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6
+          },
+          {
+            label: 'Professionalism',
+            data: professionalism,
+            borderColor: '#8b5cf6',
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#8b5cf6',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 6
+          }
+        ]
+      };
+      
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              padding: 20,
+              font: {
+                family: 'Inter',
+                size: 14,
+                weight: '500'
+              }
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderWidth: 1,
+            cornerRadius: 8,
+            displayColors: true,
+            font: {
+              family: 'Inter'
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 10,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              font: {
+                family: 'Inter',
+                size: 12
+              },
+              color: '#64748b'
+            },
+            title: {
+              display: true,
+              text: 'Score (0-10)',
+              font: {
+                family: 'Inter',
+                size: 14,
+                weight: '600'
+              },
+              color: '#1e293b'
+            }
+          },
+          x: {
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              font: {
+                family: 'Inter',
+                size: 12
+              },
+              color: '#64748b'
+            },
+            title: {
+              display: true,
+              text: 'Time',
+              font: {
+                family: 'Inter',
+                size: 14,
+                weight: '600'
+              },
+              color: '#1e293b'
+            }
+          }
+        }
+      };
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: chartOptions
+      });
+      
+    } catch (e) {
+      console.error("Error initializing Chart.js:", e);
+      document.getElementById('performanceChart').parentElement.innerHTML = `
+        <h2>📈 Performance Timeline</h2>
+        <div style="text-align: center; padding: 40px; color: #64748b;">
+          <p>Chart visualization temporarily unavailable</p>
+          <p>Check console for technical details</p>
+        </div>
+      `;
+    }
+
+    // Function to set progress bar width and color
+    function setProgressBar(id, score) {
+      const bar = document.getElementById(id);
+      if (bar) {
+        const percentage = (score / 10) * 100; // Convert score to percentage
+        bar.style.setProperty('--progress-width', `${percentage}%`);
+
+        // Set color based on score (adjust thresholds as needed)
+        if (score >= 7) {
+          bar.classList.add('good');
+        } else if (score >= 5) {
+          bar.classList.add('average');
+        } else {
+          bar.classList.add('poor');
+        }
+      }
+    }
+
+    // Animate score rings and set progress bars on load
+    document.addEventListener('DOMContentLoaded', function() {
+      const rings = document.querySelectorAll('.score-ring');
+      rings.forEach(ring => {
+        const score = ring.style.getPropertyValue('--score');
+        ring.style.setProperty('--progress', '0deg');
+        
+        setTimeout(() => {
+          ring.style.transition = 'all 2s cubic-bezier(0.4, 0, 0.2, 1)';
+          ring.style.setProperty('--progress', `${score * 36}deg`);
+        }, 500);
+      });
+
+      setProgressBar('engagement-bar', {{ engagement_final }});
+      setProgressBar('confidence-bar', {{ confidence_final }});
+      setProgressBar('stress-bar', {{ stress_final }});
+      setProgressBar('professionalism-bar', {{ professionalism_final }});
+    });
+  </script>
+</body>
+</html>
