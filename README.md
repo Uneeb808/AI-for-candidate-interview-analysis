@@ -29,8 +29,7 @@ In today’s remote-first world, traditional interviews rely heavily on subjecti
 3. **Posture & Movement** scoring via MediaPipe Pose.  
 4. **Anxiety Detection** through blink count, face touches, jaw tension.  
 5. **Expressive Speech**—pitch variability, range, energy variance.  
-6. **Head-nod Frequency** as a proxy for engagement/seeking feedback.  
-7. **Composite “Engagement”, “Confidence”, “Stress” & “Professionalism”** time-series data and summary averages.  
+6. **Composite “Engagement”, “Confidence”, “Stress” & “Professionalism”** time-series data and summary averages.  
 
 At the end, an **Overall Score** (0–10) combines all four pillars with customizable weights.
 
