@@ -1,6 +1,4 @@
 """
-Full Updated app.py for Interview Analysis
-
 Features:
   - Eye Contact Analysis (using MediaPipe FaceMesh)
   - Posture Analysis (using MediaPipe Pose)
@@ -10,11 +8,8 @@ Features:
        • Extracts pitch standard deviation and pitch range (both normalized)
        • Computes energy variance from RMS energy as a measure of expressiveness
        • Uses a rich set of if-then conditions (penalties and bonuses) to adjust a base score
-  - Additional metrics such as Head Nodding Frequency
   - **New Category Scores & Time-Series Data:** • Engagement, Confidence, Stress Level, and Professionalism (tracked each frame)
-       • Time-series arrays with timestamps for graphing performance over time
 
-Note: FFmpeg must be installed and available in your PATH.
 """
 
 from flask import Flask, render_template, request
@@ -28,17 +23,14 @@ from hsemotion_onnx.facial_emotions import HSEmotionRecognizer
 import mediapipe as mp
 import librosa
 
-# ================================================================
 # App Initialization and Upload Folder Setup
-# ================================================================
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ================================================================
 # CONSTANTS
-# ================================================================
+
 
 # Eye Contact Analysis Constants
 LEFT_EYE = [362, 385, 387, 263, 373, 380]
@@ -67,9 +59,9 @@ EMOTION_WEIGHTS = {
     'Contempt': 0.1
 }
 
-# ================================================================
+
 # TEMPLATE FILTERS
-# ================================================================
+
 @app.template_filter('base64_encode')
 def base64_encode_filter(frame):
     """Encodes a frame (numpy array) as a base64 string for inclusion in HTML."""
@@ -85,9 +77,7 @@ def base64_encode_filter(frame):
         print(f"Error encoding frame: {e}")
         return ""
 
-# ================================================================
 # HELPER FUNCTIONS
-# ================================================================
 
 def calculate_ear(eye):
     """
@@ -130,7 +120,7 @@ def analyze_eye_contact(frame, face_mesh, frame_count):
 
 def analyze_jaw_tension(face_landmarks):
     """
-    Analyze jaw tension based on landmarks.
+    Analyzing jaw tension based on the landmarks.
     Returns True if jaw width is less than threshold.
     """
     jaw_left = np.array([face_landmarks[234].x, face_landmarks[234].y])
@@ -142,6 +132,7 @@ def analyze_posture(frame, pose, last_shoulder_diff, last_hip_diff):
     """
     Analyze posture via MediaPipe Pose landmarks.
     Returns (shift_detected, shoulder_diff, hip_diff, debug_frame).
+    if camera only has upper body in frame then posture shift is calculated from shoulder coordinates only
     """
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = pose.process(frame_rgb)
