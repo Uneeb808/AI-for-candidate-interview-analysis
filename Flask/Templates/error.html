@@ -1,1 +1,47 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error</title>
+    <style>
+        .error-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ff6b6b;
+            border-radius: 5px;
+            background-color: #fff5f5;
+        }
+        .error-title {
+            color: #ff6b6b;
+            margin-top: 0;
+        }
+        .error-details {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ffecec;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .home-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1 class="error-title">⚠️ Error: {{ message }}</h1>
+        {% if details %}
+        <p>Error details:</p>
+        <div class="error-details">{{ details }}</div>
+        {% endif %}
+        <a href="/" class="home-link">Try Again</a>
+    </div>
+</body>
+</html>
