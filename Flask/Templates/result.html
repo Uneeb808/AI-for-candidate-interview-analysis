@@ -602,13 +602,6 @@
       </div>
     </div>
     
-    <div class="chart-container">
-      <h2>📈 Performance Timeline</h2>
-      <canvas id="performanceChart"></canvas>
-      <p style="text-align: center; color: #64748b; margin-top: 16px;">
-        Interactive timeline showing your performance metrics throughout the interview
-      </p>
-    </div>
     
     <div class="card">
       <h2>
@@ -698,63 +691,7 @@
     };
     document.getElementById('debug-data').textContent = JSON.stringify(debugData, null, 2);
     
-    // Create the performance chart
-    try {
-      const ctx = document.getElementById('performanceChart').getContext('2d');
-      
-      const chartData = {
-        labels: times.map(t => `${t}s`),
-        datasets: [
-          {
-            label: 'Engagement',
-            data: engagement,
-            borderColor: '#10b981',
-            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#10b981',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 6
-          },
-          {
-            label: 'Confidence',
-            data: confidence,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#3b82f6',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 6
-          },
-          {
-            label: 'Stress Level',
-            data: stress,
-            borderColor: '#ef4444',
-            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#ef4444',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 6
-          },
-          {
-            label: 'Professionalism',
-            data: professionalism,
-            borderColor: '#8b5cf6',
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#8b5cf6',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 6
-          }
-        ]
-      };
+     
       
       const chartOptions = {
         responsive: true,
@@ -845,16 +782,7 @@
         options: chartOptions
       });
       
-    } catch (e) {
-      console.error("Error initializing Chart.js:", e);
-      document.getElementById('performanceChart').parentElement.innerHTML = `
-        <h2>📈 Performance Timeline</h2>
-        <div style="text-align: center; padding: 40px; color: #64748b;">
-          <p>Chart visualization temporarily unavailable</p>
-          <p>Check console for technical details</p>
-        </div>
-      `;
-    }
+    } 
 
     // Function to set progress bar width and color
     function setProgressBar(id, score) {
