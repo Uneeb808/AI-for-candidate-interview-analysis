@@ -70,7 +70,7 @@ Each is aggregated across all frames to yield a **final average (0–10)**.
 - **app.py**  
   This is the main backend file built with Flask. It handles:
   - Accepting video uploads.
-  - Video processing and audio extraction using **OpenCV**, **MediaPipe**, and **Librosa**.
+  - Video processing and audio extraction using **OpenCV**, **MediaPipe** and **Librosa**.
   - Running the core machine learning models for emotion recognition and metric computation.
   - Compiling the analysis results and rendering appropriate HTML pages (e.g., result.html).
 
