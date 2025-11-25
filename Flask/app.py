@@ -8,7 +8,7 @@ Features:
        • Extracts pitch standard deviation and pitch range (both normalized)
        • Computes energy variance from RMS energy as a measure of expressiveness
        • Uses a rich set of if-then conditions (penalties and bonuses) to adjust a base score
-  - **New Category Scores & Time-Series Data:** • Engagement, Confidence, Stress Level, and Professionalism (tracked each frame)
+  - **New Category Scores & Time-Series Data:** • Engagement, Confidence, Stress Level and Professionalism (tracked each frame)
 
 """
 
